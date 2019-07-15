@@ -57,7 +57,7 @@ func _physics_process(delta):
 		rotate_camera(Vector2(mouse_relative.y * delta * Sensitivity_X, mouse_relative.x * delta * Sensitivity_Y))
 		mouse_relative = Vector2()
 
-	if move_offset != Vector2.ZERO or move_forward != 0 or move_right != 0:
+	if move_offset != Vector2.ZERO or move_forward != 0 or move_right != 0 or !is_on_floor():
 		move(delta)
 
 func rotate_camera(offset):
