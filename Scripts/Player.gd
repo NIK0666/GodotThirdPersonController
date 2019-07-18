@@ -90,24 +90,24 @@ func move(delta):
 		if rotate_model(delta):
 			return
 		
-	
-	if move_offset.x < 0:
-		move_forward = max(move_forward - Acceleration_Start, -Max_Speed)
-	elif move_offset.x > 0:
-		move_forward = min(move_forward + Acceleration_Start, Max_Speed)
-	elif move_forward > 0:
-		move_forward = max(move_forward - Acceleration_Stop, 0)
-	elif move_forward < 0:
-		move_forward = min(move_forward + Acceleration_Stop, 0)
-		
-	if move_offset.y < 0:
-		move_right = max(move_right - Acceleration_Start, -Max_Speed)
-	elif move_offset.y > 0:
-		move_right = min(move_right + Acceleration_Start, Max_Speed)
-	elif move_right > 0:
-		move_right = max(move_right - Acceleration_Stop, 0)
-	elif move_right < 0:
-		move_right = min(move_right + Acceleration_Stop, 0)
+	if is_on_floor():
+		if move_offset.x < 0:
+			move_forward = max(move_forward - Acceleration_Start, -Max_Speed)
+		elif move_offset.x > 0:
+			move_forward = min(move_forward + Acceleration_Start, Max_Speed)
+		elif move_forward > 0:
+			move_forward = max(move_forward - Acceleration_Stop, 0)
+		elif move_forward < 0:
+			move_forward = min(move_forward + Acceleration_Stop, 0)
+			
+		if move_offset.y < 0:
+			move_right = max(move_right - Acceleration_Start, -Max_Speed)
+		elif move_offset.y > 0:
+			move_right = min(move_right + Acceleration_Start, Max_Speed)
+		elif move_right > 0:
+			move_right = max(move_right - Acceleration_Stop, 0)
+		elif move_right < 0:
+			move_right = min(move_right + Acceleration_Stop, 0)
 		
 	var direction = Vector3()
 	direction.x = move_right * delta
@@ -123,6 +123,10 @@ func move(delta):
 		rotate_model(delta)
 
 func rotate_model(delta):
+	
+	if !is_on_floor():
+		return
+	
 	var target_rotation_y = rotate_node.rotation.y
 	
 	if move_offset.x > 0 and move_offset.y == 0:
