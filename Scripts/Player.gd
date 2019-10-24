@@ -12,7 +12,7 @@ const MIN_ROT_Y = -89
 const MAX_ROT_Y = 45
 const ZOOM_MIN = 2
 const ZOOM_MAX = 10
-const GRAVITY = 9.8
+const GRAVITY = 9.8 * 4
 
 onready var rotate_node = $SpringArm
 onready var model_node = $CSG_Model
