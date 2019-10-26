@@ -59,19 +59,20 @@ func move(delta):
 			return
 		
 	if is_on_floor():
+		var normalized_offset: Vector2 = move_offset.normalized()
 		if move_offset.x < 0:
-			move_forward = max(move_forward - Acceleration_Start, -Max_Speed)
+			move_forward = max(move_forward - Acceleration_Start, Max_Speed * normalized_offset.x)
 		elif move_offset.x > 0:
-			move_forward = min(move_forward + Acceleration_Start, Max_Speed)
+			move_forward = min(move_forward + Acceleration_Start, Max_Speed  * normalized_offset.x)
 		elif move_forward > 0:
 			move_forward = max(move_forward - Acceleration_Stop, 0)
 		elif move_forward < 0:
 			move_forward = min(move_forward + Acceleration_Stop, 0)
 			
 		if move_offset.y < 0:
-			move_right = max(move_right - Acceleration_Start, -Max_Speed)
+			move_right = max(move_right - Acceleration_Start, Max_Speed * normalized_offset.y)
 		elif move_offset.y > 0:
-			move_right = min(move_right + Acceleration_Start, Max_Speed)
+			move_right = min(move_right + Acceleration_Start, Max_Speed * normalized_offset.y)
 		elif move_right > 0:
 			move_right = max(move_right - Acceleration_Stop, 0)
 		elif move_right < 0:
@@ -80,10 +81,6 @@ func move(delta):
 	var direction: Vector3 = Vector3()
 	direction.x = move_right * delta
 	direction.z = move_forward * delta
-	
-	if move_forward != 0 and move_right != 0:
-		direction.x *= 0.71
-		direction.z *= 0.71
 	
 	direction = direction.rotated(Vector3(0, 1, 0), rotate_node.rotation.y)
 	
