@@ -1,6 +1,7 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://MovedPlatform.tscn" type="PackedScene" id=2]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Spatial
@@ -18,43 +19,6 @@ func _process(delta):
 	if Input.is_key_pressed(KEY_ESCAPE):
 		get_tree().quit()
 "
-
-[sub_resource type="GDScript" id=2]
-script/source = "extends StaticBody
-
-var offset_y: float = 2.5
-
-func _ready():
-	self.move()
-
-func move():
-	var tween = get_node(\"Tween\")
-	var from: float
-	var to: float
-	if offset_y < 5:
-		from = 2.5
-		to = 10.0
-	else:
-		to = 2.5
-		from = 10.0
-	tween.interpolate_property(self, \"offset_y\", from, to, 6, Tween.TRANS_CUBIC, Tween.EASE_IN_OUT)
-	tween.interpolate_callback(self, 6.5, \"move\")
-	tween.start()
-	
-func _physics_process(delta):
-	self.translation.y = offset_y
-"
-
-[sub_resource type="CubeMesh" id=3]
-size = Vector3( 2, 0.5, 4 )
-
-[sub_resource type="SpatialMaterial" id=4]
-albedo_color = Color( 0.137255, 0.227451, 0.352941, 1 )
-metallic = 0.44
-roughness = 0.52
-
-[sub_resource type="BoxShape" id=5]
-extents = Vector3( 1, 0.25, 2 )
 
 [sub_resource type="SpatialMaterial" id=6]
 albedo_color = Color( 0.513726, 0.564706, 0.505882, 1 )
@@ -79,20 +43,6 @@ extents = Vector3( 1, 1, 2.86814 )
 
 [node name="TestLevel" type="Spatial"]
 script = SubResource( 1 )
-
-[node name="StaticBody" type="StaticBody" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6.946, 2.5, -12.691 )
-script = SubResource( 2 )
-
-[node name="Tween" type="Tween" parent="StaticBody"]
-
-[node name="CSGMesh30" type="CSGMesh" parent="StaticBody"]
-mesh = SubResource( 3 )
-material = SubResource( 4 )
-
-[node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
-transform = Transform( 1, 0, -9.31323e-10, -4.65661e-10, 1, 0, 9.31323e-10, -2.98023e-08, 1, 0, 0, 0 )
-shape = SubResource( 5 )
 
 [node name="LevelGeometry" type="Spatial" parent="."]
 
@@ -412,3 +362,19 @@ shape = SubResource( 11 )
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0 )
+
+[node name="Platforms" type="Spatial" parent="."]
+
+[node name="MovedPlatform" parent="Platforms" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5, -13 )
+offset_y = -3.0
+
+[node name="MovedPlatform2" parent="Platforms" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 10, -9 )
+offset_y = -5.0
+move_time = 10.0
+
+[node name="MovedPlatform3" parent="Platforms" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 10, -9 )
+offset_y = 4.0
+move_time = 4.0

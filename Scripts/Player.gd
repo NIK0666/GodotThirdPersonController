@@ -9,8 +9,11 @@ export var Acceleration_Stop: float = 0.5
 export var Walk_Max_Speed: float = 3.5
 export var Sprint_Max_Speed: float = 8
 export var Rotate_Model_Step: float = PI * 2.0
+export var GravityFloorMul: float = 20.0
+export var GravityFlyMul: float = 3.0
+export var GravityExternalMul: float = 1.0
 
-const GRAVITY = 9.8 * 5
+const GRAVITY = 9.8
 enum RotateSide {NONE, LEFT, RIGHT}
 
 
@@ -29,6 +32,7 @@ var current_speed: float = 0.0
 var is_sprint: bool = false
 var rotate_side = RotateSide.NONE
 var jumping: bool = false setget _set_jumping
+var gravity: float
 
 func _ready():
 	
@@ -52,10 +56,16 @@ func _input(event):
 		is_sprint = false
 
 func _process(delta):
+	
 	move_offset = Vector2(Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward"),
 		Input.get_action_strength("move_right") - Input.get_action_strength("move_left"))
 
 func _physics_process(delta):
+	
+	if is_on_floor():
+		gravity = GRAVITY * GravityFloorMul * GravityExternalMul
+	else:
+		gravity = GRAVITY * GravityFlyMul * GravityExternalMul
 	
 	var can_move: bool = true
 	if move_forward == 0 and move_right == 0 and move_offset != Vector2.ZERO:
@@ -69,19 +79,18 @@ func _physics_process(delta):
 			state_machine.set("parameters/conditions/end_right_turn", false)
 			state_machine.set("parameters/conditions/right_turn", true)
 			can_move = false
-		else:
-			state_machine.set("parameters/conditions/end_right_turn", true)
-			state_machine.set("parameters/conditions/end_left_turn", true)
-			state_machine.set("parameters/conditions/left_turn", false)
-			state_machine.set("parameters/conditions/right_turn", false)
-
+	else:
+		state_machine.set("parameters/conditions/end_right_turn", true)
+		state_machine.set("parameters/conditions/end_left_turn", true)
+		state_machine.set("parameters/conditions/left_turn", false)
+		state_machine.set("parameters/conditions/right_turn", false)
 #	if jumping or !is_on_floor():
 #		can_move = false
 	
 	if can_move:
 		move(delta)
 	
-	velocity.y -= GRAVITY * delta
+	velocity.y -= gravity * delta
 	velocity = move_and_slide(velocity, Vector3.UP)
 	
 #	if move_offset != Vector2.ZERO or move_forward != 0 or move_right != 0 or jumping or !is_on_floor():
@@ -126,7 +135,6 @@ func move(delta):
 	
 	velocity.x = direction.x
 	velocity.z = direction.z
-
 	
 	if jumping and is_on_floor():
 		velocity.y += Jump_Speed
